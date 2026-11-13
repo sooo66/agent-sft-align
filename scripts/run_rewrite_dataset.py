@@ -8,10 +8,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Set
 
 from tqdm import tqdm
+
+_REPO_SRC = Path(__file__).resolve().parents[1] / "src"
+if _REPO_SRC.exists() and str(_REPO_SRC) not in sys.path:
+    sys.path.insert(0, str(_REPO_SRC))
 
 from agent_sft_align.data import annotate_detour_and_error_steps, load_eto_trajectories
 from agent_sft_align.engine import HFStepLogProbScorer, RewriterConfig, SequentialELBORewriter
