@@ -1,0 +1,37 @@
+# Default configuration for Week 1-2 ALFWorld Diagnostic & Pilot SFT
+experiment_name: "alfworld_qwen25_pilot"
+seed: 42
+
+data:
+  hf_repo_id: "agent-eto/eto-sft-trajectory"
+  task: "alfworld"  # choices: alfworld, webshop, sciworld
+  max_trajectories_diagnostic: 100
+  enable_error_step_masking: true
+
+model:
+  # Recommended pilot: Qwen/Qwen2.5-3B-Instruct or Qwen/Qwen2.5-7B-Instruct
+  # Pure base models (e.g. Qwen/Qwen2.5-7B) also supported via prompt_mode="react_raw"
+  target_model_name_or_path: "Qwen/Qwen2.5-3B-Instruct"
+  prompt_mode: "auto"  # choices: auto, chat, react_raw
+  dtype: "bfloat16"
+
+rewriter:
+  num_candidates: 6
+  temperatures: [0.4, 0.7, 1.0]
+  max_new_tokens: 160
+  # Joint ELBO Scoring: J(r) = delta_act(r) + lambda_prior * mean_prior_logprob(r) - gamma_cvar * cvar10_nll(r)
+  lambda_prior: 0.5
+  gamma_cvar: 0.15
+  allow_teacher_fallback: true
+  allow_minimal_thought_candidate: true
+
+sft:
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-5
+  num_train_epochs: 3
+  max_seq_length: 4096
+  save_steps: 200
+  use_lora: false
+  lora_r: 64
+  lora_alpha: 128
